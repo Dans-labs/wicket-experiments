@@ -28,9 +28,21 @@ public class ShowItems extends Panel {
         }};
         item.add(text);
       }
+
+      @Override
+      public boolean isVisible() {
+        return !ShowItems.this.shoppingList.isEmpty();
+      }
     };
 
-    this.add(shoppingListUI);
+    Label emptyLabel = new Label("no-shoppinglist-items", "<No items in the list>") {
+      @Override
+      public boolean isVisible() {
+        return ShowItems.this.shoppingList.isEmpty();
+      }
+    };
+
+    this.add(shoppingListUI, emptyLabel);
   }
 
   private AjaxEventBehavior removeShoppingListItemBehavior(final ListItem<ShoppingListItem> item) {

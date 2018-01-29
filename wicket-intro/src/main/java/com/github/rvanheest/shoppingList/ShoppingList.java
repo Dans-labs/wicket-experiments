@@ -20,14 +20,13 @@ public class ShoppingList extends WebPage {
     this.shoppingList = new ArrayList<>();
     this.shoppingList.addAll(Arrays.asList(new ShoppingListItem("sugar"), new ShoppingListItem("tea")));
 
-    Label header = new Label("shoppinglist-header", "Shopping list");
     this.showItems = new ShowItems("showItems", shoppingList);
     ItemForm form = new ItemForm("form", shoppingList, showItems);
     Button clearButton = new Button("clear-button") {{
       add(ShoppingList.this.clearBehavior());
     }};
 
-    this.add(header, clearButton, this.showItems, form);
+    this.add(clearButton, this.showItems, form);
   }
 
   private AjaxEventBehavior clearBehavior() {

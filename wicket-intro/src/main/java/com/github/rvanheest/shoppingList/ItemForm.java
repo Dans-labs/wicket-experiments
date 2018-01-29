@@ -23,7 +23,6 @@ public class ItemForm extends Panel {
     this.shoppingList = shoppingList;
     this.showItems = showItems;
 
-    Label header = new Label("form-header", new Model<>("Add new item..."));
     Form<ShoppingListItem> form = new Form<>("form", new CompoundPropertyModel<>(new ShoppingListItem()));
 
     final TextField<String> tf = new TextField<>("text");
@@ -36,7 +35,7 @@ public class ItemForm extends Panel {
     };
 
     form.add(tf, button);
-    this.add(header, form);
+    this.add(form);
   }
 
   private void submitForm(ShoppingListItem formItem, AjaxRequestTarget target) {
