@@ -18,15 +18,15 @@ public class ShoppingList extends WebPage {
 
   public ShoppingList() {
     this.shoppingList = new ArrayList<>();
-    this.shoppingList.addAll(Arrays.asList(new ShoppingListItem("sugar"), new ShoppingListItem("tea")));
 
     this.showItems = new ShowItems("showItems", shoppingList);
     ItemForm form = new ItemForm("form", shoppingList, showItems);
     Button clearButton = new Button("clear-button") {{
       add(ShoppingList.this.clearBehavior());
     }};
+    ChooseForm chooseForm = new ChooseForm("choose-form", shoppingList, showItems);
 
-    this.add(clearButton, this.showItems, form);
+    this.add(clearButton, this.showItems, form, chooseForm);
   }
 
   private AjaxEventBehavior clearBehavior() {

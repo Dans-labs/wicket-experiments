@@ -17,7 +17,7 @@ public class ItemForm extends Panel {
   private final List<ShoppingListItem> shoppingList;
   private final Component showItems;
 
-  public ItemForm(String id, final List<ShoppingListItem> shoppingList, final Component showItems) {
+  public ItemForm(String id, List<ShoppingListItem> shoppingList, Component showItems) {
     super(id);
     this.setOutputMarkupId(true);
     this.shoppingList = shoppingList;
@@ -30,7 +30,7 @@ public class ItemForm extends Panel {
 
       @Override
       protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-        submitForm((ShoppingListItem) this.getParent().getDefaultModelObject(), target);
+        submitForm((ShoppingListItem) form.getDefaultModelObject(), target);
       }
     };
 
@@ -46,7 +46,7 @@ public class ItemForm extends Panel {
     formItem.setText("");
 
     // repaint the form based on the resetting of the model
-    target.add(ItemForm.this);
+    target.add(this);
 
     // repaint the listview
     target.add(this.showItems);
