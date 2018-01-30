@@ -4,10 +4,13 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 
@@ -82,7 +85,7 @@ public class ChooseForm extends Panel {
     this.add(form);
   }
 
-  private AjaxFormComponentUpdatingBehavior groupsChangeBehavior() {
+  private Behavior groupsChangeBehavior() {
     return new AjaxFormComponentUpdatingBehavior("change") {
 
       @Override
@@ -92,8 +95,7 @@ public class ChooseForm extends Panel {
     };
   }
 
-  private LoadableDetachableModel<List<ShoppingListItem>> itemsModel(
-      final DropDownChoice<String> dependingChoice) {
+  private IModel<List<ShoppingListItem>> itemsModel(final FormComponent<String> dependingChoice) {
     return new LoadableDetachableModel<List<ShoppingListItem>>() {
 
       @Override
