@@ -5,14 +5,15 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,22 +25,22 @@ import java.util.Map;
 // see also https://stackoverflow.com/questions/23353416/wicket-how-can-a-dropdownchoice-select-change-the-options-of-another-dropdownch
 public class ChooseForm extends Panel {
 
-  private static Map<String, List<ShoppingListItem>> choices = new HashMap<>();
+  private static Map<String, List<String>> choices = new HashMap<>();
   private static List<String> keys;
 
   static {
     // @formatter:off
     choices.put("Dairy", Arrays.asList(
-        new ShoppingListItem("Milk"),
-        new ShoppingListItem("Buttermilk"),
-        new ShoppingListItem("Butter"),
-        new ShoppingListItem("Yogurt")));
+        "Milk",
+        "Buttermilk",
+        "Butter",
+        "Yogurt"));
     choices.put("Meat", Arrays.asList(
-        new ShoppingListItem("Chicken"),
-        new ShoppingListItem("Beef"),
-        new ShoppingListItem("Pork"),
-        new ShoppingListItem("Turkey"),
-        new ShoppingListItem("Kangaroo")));
+        "Chicken",
+        "Beef",
+        "Pork",
+        "Turkey",
+        "Kangaroo"));
     // @formatter:on
 
     keys = new ArrayList<>(choices.keySet());
@@ -48,8 +49,8 @@ public class ChooseForm extends Panel {
   private final List<ShoppingListItem> shoppingList;
   private final Component showItems;
 
-  private final Model<String> groupModel = new Model<>();
-  private final Model<ShoppingListItem> itemModel = new Model<>();
+  private final Model<String> groupModel = Model.of();
+  private final PropertyModel<String> itemModel;
 
   public ChooseForm(String id, List<ShoppingListItem> shoppingList, Component showItems) {
     super(id);
@@ -57,15 +58,15 @@ public class ChooseForm extends Panel {
     this.shoppingList = shoppingList;
     this.showItems = showItems;
 
-    Form<ShoppingListItem> form = new Form<>("choose-form");
+    ShoppingListItem formItem = new ShoppingListItem();
+    Form<ShoppingListItem> form = new Form<>("choose-form", new CompoundPropertyModel<>(formItem));
 
-    final DropDownChoice<String> groups = new DropDownChoice<String>("groups", this.groupModel,
-        keys) {{
+    final DropDownChoice<String> groups = new DropDownChoice<String>("groups", this.groupModel, keys) {{
       add(ChooseForm.this.groupsChangeBehavior());
     }};
 
-    DropDownChoice<ShoppingListItem> items = new DropDownChoice<ShoppingListItem>("items",
-        this.itemModel, this.itemsModel(groups), this.itemChoiceRenderer()) {
+    this.itemModel = PropertyModel.of(formItem, "text");
+    DropDownChoice<String> items = new DropDownChoice<String>("items", this.itemModel, this.itemsModel(groups)) {
 
       @Override
       public boolean isEnabled() {
@@ -77,7 +78,7 @@ public class ChooseForm extends Panel {
 
       @Override
       protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-        ChooseForm.this.submitForm(ChooseForm.this.itemModel.getObject(), target);
+        ChooseForm.this.submitForm((ShoppingListItem) form.getDefaultModelObject(), target);
       }
     };
 
@@ -95,25 +96,12 @@ public class ChooseForm extends Panel {
     };
   }
 
-  private IModel<List<ShoppingListItem>> itemsModel(final FormComponent<String> dependingChoice) {
-    return new LoadableDetachableModel<List<ShoppingListItem>>() {
+  private IModel<List<String>> itemsModel(final FormComponent<String> dependingChoice) {
+    return new LoadableDetachableModel<List<String>>() {
 
       @Override
-      protected List<ShoppingListItem> load() {
-        String group = dependingChoice.getModelObject();
-        List<ShoppingListItem> items = choices.get(group);
-
-        return items == null ? Collections.<ShoppingListItem> emptyList() : items;
-      }
-    };
-  }
-
-  private ChoiceRenderer<ShoppingListItem> itemChoiceRenderer() {
-    return new ChoiceRenderer<ShoppingListItem>() {
-
-      @Override
-      public Object getDisplayValue(ShoppingListItem object) {
-        return object.getText();
+      protected List<String> load() {
+        return choices.getOrDefault(dependingChoice.getModelObject(), Collections.emptyList());
       }
     };
   }
@@ -123,14 +111,18 @@ public class ChooseForm extends Panel {
     this.shoppingList.add(new ShoppingListItem(formItem));
 
     // reset the form
-    formItem.setText("");
-    this.groupModel.setObject(null);
-    this.itemModel.setObject(null);
+    formItem.reset();
+    this.resetForm();
 
     // repaint the form based on the previous resetting
     target.add(this);
 
     // repaint the listview
     target.add(this.showItems);
+  }
+
+  private void resetForm() {
+    this.groupModel.setObject(null);
+    this.itemModel.setObject(null);
   }
 }

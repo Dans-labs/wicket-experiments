@@ -25,6 +25,10 @@ public class ShoppingListItem implements Serializable {
     this.text = text;
   }
 
+  public void reset() {
+    this.setText(null);
+  }
+
   @Override
   public boolean equals(Object other) {
     if (other instanceof ShoppingListItem) {

@@ -50,15 +50,12 @@ public class ShowItems extends Panel {
 
       @Override
       protected void onEvent(AjaxRequestTarget target) {
-        removeShoppingListItem(item, target);
+        removeShoppingListItem((ShoppingListItem) item.getDefaultModelObject(), target);
       }
     };
   }
 
-  private void removeShoppingListItem(final ListItem<ShoppingListItem> item, AjaxRequestTarget target) {
-    // retrieve the clicked ShoppingListItem
-    ShoppingListItem shoppingItem = (ShoppingListItem) item.getDefaultModelObject();
-
+  private void removeShoppingListItem(ShoppingListItem shoppingItem, AjaxRequestTarget target) {
     // remove it from the model
     this.shoppingList.remove(shoppingItem);
 
