@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <title>Shopping list</title>
+    <style>
+        body {
+          padding: 10px;
+          max-width: 900px;
+        }
+    </style>
+</head>
+<body>
+<nav>
+    <div class="nav-wrapper">
+        <a class="brand-logo center">Shopping list</a>
+    </div>
+</nav>
+
+<button class="waves-effect waves-light btn" style="margin-top: 5px;" type="reset" wicket:id="clear-button">Clear items</button>
+
+<wicket:panel wicket:id="showItems"/>
+
+<hr>
+
+<wicket:panel wicket:id="form"/>
+
+<hr>
+
+<wicket:panel wicket:id="choose-form"/>
+
+</body>
+</html>

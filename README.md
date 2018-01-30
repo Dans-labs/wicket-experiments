@@ -3,6 +3,7 @@
 This repository contains Maven projects for experimenting with the Wicket web framework.
 
 * [wicket-intro](/wicket-intro)
+* [wicket-intro-8](/wicket-intro-8)
 * ...
 
 ## Get started
@@ -22,6 +23,9 @@ These are the urls to follow in order to see the results:
     * default home page - http://localhost:8080
     * shoppinglist - http://localhost:8080/shoppinglist
 
-## Tutorial
+## Tutorials/Documentation
 * [Apache Wicket Quick Start](https://www.youtube.com/watch?v=V_XmXeiVito)
-* ...
+* [Guide (Wicket 7)](https://ci.apache.org/projects/wicket/guide/7.x/single.html)
+* [API docs (Wicket 7)](https://ci.apache.org/projects/wicket/apidocs/7.x/index.html)
+* [Guide (Wicket 8)](https://ci.apache.org/projects/wicket/guide/8.x/single.html)
+* [API docs (Wicket 8)](https://ci.apache.org/projects/wicket/apidocs/8.x/index.html)

@@ -4,16 +4,17 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LambdaModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.wicketstuff.lambda.components.ComponentFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,14 +60,16 @@ public class ChooseForm extends Panel {
     this.showItems = showItems;
 
     ShoppingListItem formItem = new ShoppingListItem();
-    Form<ShoppingListItem> form = new Form<>("choose-form", new CompoundPropertyModel<>(formItem));
+    Form<ShoppingListItem> form = new Form<>("choose-form", CompoundPropertyModel.of(formItem));
 
-    final DropDownChoice<String> groups = new DropDownChoice<String>("groups", this.groupModel, keys) {{
-      add(ChooseForm.this.groupsChangeBehavior());
+    DropDownChoice<String> groups = new DropDownChoice<String>("groups", this.groupModel, keys) {{
+      add(AjaxFormComponentUpdatingBehavior
+          .onUpdate("change", target -> target.add(ChooseForm.this)));
     }};
 
-    this.itemModel = PropertyModel.of(formItem, "text");
-    DropDownChoice<String> items = new DropDownChoice<String>("items", this.itemModel, this.itemsModel(groups)) {
+    this.itemModel = Model.of(formItem).flatMap(item -> LambdaModel.of(item::getText, item::setText));
+    DropDownChoice<String> items = new DropDownChoice<String>("items", this.itemModel,
+        this.itemsModel(groups)) {
 
       @Override
       public boolean isEnabled() {
@@ -74,36 +77,16 @@ public class ChooseForm extends Panel {
       }
     };
 
-    AjaxButton button = new AjaxButton("submit-button", form) {
-
-      @Override
-      protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-        ChooseForm.this.submitForm((ShoppingListItem) form.getDefaultModelObject(), target);
-      }
-    };
+    AjaxButton button = ComponentFactory.ajaxButton("submit-button", (btn, target) -> this
+        .submitForm((ShoppingListItem) btn.getForm().getDefaultModelObject(), target));
 
     form.add(groups, items, button);
     this.add(form);
   }
 
-  private Behavior groupsChangeBehavior() {
-    return new AjaxFormComponentUpdatingBehavior("change") {
-
-      @Override
-      protected void onUpdate(AjaxRequestTarget target) {
-        target.add(ChooseForm.this);
-      }
-    };
-  }
-
-  private IModel<List<String>> itemsModel(final FormComponent<String> dependingChoice) {
-    return new LoadableDetachableModel<List<String>>() {
-
-      @Override
-      protected List<String> load() {
-        return choices.getOrDefault(dependingChoice.getModelObject(), Collections.emptyList());
-      }
-    };
+  private IModel<List<String>> itemsModel(FormComponent<String> dependingChoice) {
+    return LoadableDetachableModel
+        .of(() -> choices.getOrDefault(dependingChoice.getModelObject(), Collections.emptyList()));
   }
 
   private void submitForm(ShoppingListItem formItem, AjaxRequestTarget target) {

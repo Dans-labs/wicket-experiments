@@ -15,18 +15,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.rvanheest</groupId>
-    <artifactId>wicket-intro</artifactId>
+    <artifactId>wicket-intro-8</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <name>wicket-intro</name>
-    <description>An introduction to Wicket</description>
+    <name>wicket-intro 8</name>
+    <description>An introduction to Wicket 8</description>
 
     <licenses>
         <license>
@@ -38,9 +37,9 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <wicket.version>7.9.0</wicket.version>
-        <jetty9.version>9.2.19.v20160908</jetty9.version>
-        <log4j.version>2.6.2</log4j.version>
+        <wicket.version>8.0.0-M8</wicket.version>
+        <jetty9.version>9.4.7.v20170914</jetty9.version>
+        <log4j.version>2.9.0</log4j.version>
         <junit.version>4.12</junit.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- allowed values: R7, 1.0, 1.5, 2.0 or none -->
@@ -58,6 +57,11 @@
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-extensions</artifactId>
+            <version>${wicket.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wicketstuff</groupId>
+            <artifactId>wicketstuff-lambda-components</artifactId>
             <version>${wicket.version}</version>
         </dependency>
 
@@ -83,11 +87,26 @@
 
         <!--  JETTY DEPENDENCIES FOR TESTING  -->
         <dependency>
-            <groupId>org.eclipse.jetty.aggregate</groupId>
-            <artifactId>jetty-all</artifactId>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+            <scope>test</scope>
+            <version>${jetty9.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-jmx</artifactId>
             <version>${jetty9.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- uncomment if WebSocket support is needed
+		<dependency>
+			<groupId>org.eclipse.jetty.websocket</groupId>
+			<artifactId>javax-websocket-server-impl</artifactId>
+			<version>${jetty.version}</version>
+			<scope>test</scope>
+		</dependency>
+        -->
     </dependencies>
 
     <repositories>
@@ -98,7 +117,6 @@
                 <enabled>false</enabled>
             </releases>
             <snapshots>
-                <enabled>true</enabled>
             </snapshots>
         </repository>
     </repositories>
@@ -106,11 +124,9 @@
     <build>
         <resources>
             <resource>
-                <filtering>false</filtering>
                 <directory>src/main/resources</directory>
             </resource>
             <resource>
-                <filtering>false</filtering>
                 <directory>src/main/java</directory>
                 <includes>
                     <include>**</include>
@@ -123,11 +139,9 @@
 
         <testResources>
             <testResource>
-                <filtering>false</filtering>
                 <directory>src/test/resources</directory>
             </testResource>
             <testResource>
-                <filtering>false</filtering>
                 <directory>src/test/java</directory>
                 <includes>
                     <include>**</include>
@@ -143,7 +157,7 @@
                 <inherited>true</inherited>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>3.6.1</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -173,7 +187,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-eclipse-plugin</artifactId>
-                <version>2.9</version>
+                <version>2.10</version>
                 <configuration>
                     <downloadSources>true</downloadSources>
                     <wtpversion>${wtp.version}</wtpversion>
